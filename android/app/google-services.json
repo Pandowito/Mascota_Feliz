@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "877833004430",
+    "project_id": "mascota-feliz-e4dd0",
+    "storage_bucket": "mascota-feliz-e4dd0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877833004430:android:92fb736e4fe79f872070df",
+        "android_client_info": {
+          "package_name": "com.example.mascota_feliz_aplicacion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7P9J7bKEaP0eO9gTdxcFpoUeUUWd8BAc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
