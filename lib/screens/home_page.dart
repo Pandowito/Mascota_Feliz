@@ -7,7 +7,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'pets_screen.dart';
 import 'login_page.dart';
 
-
+const double capacidadMaximaAlimento = 2000.0;
+const double capacidadMaximaAgua = 1000.0;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -59,16 +60,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   // ------------------------ Pestaña de MONITOREO ------------------------
   Widget _buildMonitoringTab() {
-    final DatabaseReference deviceRef = FirebaseDatabase.instance.ref('devices/esp32_comedero_1');
+    final DatabaseReference deviceRef = FirebaseDatabase.instance.ref('devices/esp32_comedero_1/sensorData');
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           // StreamBuilder para los paneles de nivel
+
           StreamBuilder<DatabaseEvent>(
             stream: deviceRef.onValue,
             builder: (context, snapshot) {
+
               if (!snapshot.hasData) {
                 return Column(
                   children: [
@@ -88,10 +91,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ],
                 );
               }
-
               final data = snapshot.data!.snapshot.value as Map<dynamic, dynamic>? ?? {};
-              final foodLevel = (data['foodLevel'] as num?)?.toInt() ?? 0;
-              final waterLevel = (data['waterLevel'] as num?)?.toInt() ?? 0;
+              //-----CONVERSIÓN ALMACENAJE ALIMENTO-----
+              double pesoAlimento = (data['storageWeight'] as num?)?.toDouble() ?? 0.0;     //Recibimos los gramos reales del ESP32
+              double porcentajeAlimento = (pesoAlimento / capacidadMaximaAlimento) * 100;   //Calculamos el porcentaje
+              int foodLevel = porcentajeAlimento.clamp(0, 100).toInt();                     // Limitamos entre 0 y 100
+              //-----CONVERSIÓN TANQUE DE AGUA-----
+              double pesoAgua = (data['waterWeight'] as num?)?.toDouble() ?? 0.0;
+              double porcentajeAgua= (pesoAgua / capacidadMaximaAgua) * 100;
+              int waterLevel = porcentajeAgua.clamp(0, 100).toInt();
 
               return Column(
                 children: [
@@ -138,7 +146,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Color _getLevelColor(int level) {
     if (level < 20) return Colors.red;
     if (level < 50) return Colors.orange;
-    return Colors.green;
+    return Colors.indigoAccent;
   }
 
 
